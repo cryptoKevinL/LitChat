@@ -59,15 +59,38 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
   if (document.getElementById('stream') === null) {
     updateAlert('danger', `Error, please write to ceramic first so a stream can be read`)
   } else {
+
+    //GET request to get messages for RX user
+    fetch(' http://localhost:12345/users', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then((response) => response.json())
+    //Then with the data from the response in JSON...
+    .then((data) => {
+      console.log('$$$kl - GET to REST API:', data);
+
     // @ts-ignore
-    const test = document.getElementById('sendaddr').value;
-    console.log('this is the streamID youre sending: ', test)
-    const response = litCeramicIntegration.readAndDecrypt(test).then(
-      (value) =>
-        // @ts-ignore
-        (document.getElementById('decryption').innerText = value)
-    )
-    console.log(response)
+    //const test = document.getElementById('sendaddr').value;
+    for(let i=0; i<data.length; i++){
+      const streamToDecrypt = data[i].streamID
+      if(data[i].toAddr == "0x0Db0448c95cad6D82695aC27022D20633C81b387") {
+        //console.log('this is the streamID youre sending: ', streamToDecrypt)
+        document.getElementById('decryption').innerText = "From:" + data[i].fromAddr + ":\n"
+        const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
+          (value) => (document.getElementById('decryption').innerText += value + "\n")
+        )
+        console.log(response)
+      }
+    }
+
+    })
+    //Then with the error genereted...
+    .catch((error) => {
+      console.error('GET to REST API error!!!!!!!!!!!!:', error);
+    });
   }
 })
 
@@ -77,8 +100,8 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
   console.log('chain in litCeramicIntegration: ', litCeramicIntegration.chain)
   // @ts-ignore
   const stringToEncrypt = document.getElementById('secret').value;
-  //const sendToAddress = document.getElementById('sendaddr');
-  //console.log(`******** + ${sendToAddress}`)
+  const sendToAddress = document.getElementById('sendaddr').value;
+  console.log(`$$$kl - + ${sendToAddress}`)
 
   // User must posess at least 0.000001 ETH on eth
   // const accessControlConditions = [
@@ -105,7 +128,7 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
       ],
       returnValueTest: {
         comparator: '=',
-        value: "0x0Db0448c95cad6D82695aC27022D20633C81b387"
+        value: `${sendToAddress}`
       }
     }
   ]
