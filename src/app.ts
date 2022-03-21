@@ -30,7 +30,8 @@ const updateStreamID = (resp: string | String) => {
   document.getElementById('stream').innerText = resp
 
   //Obj of data to send in future like a dummyDb
-  const data = { streamID: `${streamID}`, fromAddr: "0x219079f24Db6867F47Daefd57C3A549e819008B4", toAddr: "0x0Db0448c95cad6D82695aC27022D20633C81b387" };
+  const sendToAddress = document.getElementById('sendaddr').value;
+  const data = { streamID: `${streamID}`, fromAddr: "0x219079f24Db6867F47Daefd57C3A549e819008B4", toAddr: `${sendToAddress}` };
   //POST request with body equal on data in JSON format
   fetch(' http://localhost:12345/users', {
     method: 'POST',
