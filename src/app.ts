@@ -9,7 +9,7 @@ declare global {
 
 let litCeramicIntegration = new Integration('https://ceramic-clay.3boxlabs.com', 'polygon')
 
-let streamID = 'kjzl6cwe1jw1479rnblkk5u43ivxkuo29i4efdx1e7hk94qrhjl0d4u0dyys1au' // test data
+let streamID = 'this should never work' // test data
 
 const updateAlert = (status: string, message: string) => {
   const alert = document.getElementById('alerts')
@@ -40,8 +40,9 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
     updateAlert('danger', `Error, please write to ceramic first so a stream can be read`)
   } else {
     // @ts-ignore
-    console.log('this is the streamID youre sending: ', streamID)
-    const response = litCeramicIntegration.readAndDecrypt(streamID).then(
+    const test = document.getElementById('sendaddr').value;
+    console.log('this is the streamID youre sending: ', test)
+    const response = litCeramicIntegration.readAndDecrypt(test).then(
       (value) =>
         // @ts-ignore
         (document.getElementById('decryption').innerText = value)
@@ -55,20 +56,38 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
 document.getElementById('encryptLit')?.addEventListener('click', function () {
   console.log('chain in litCeramicIntegration: ', litCeramicIntegration.chain)
   // @ts-ignore
-  const stringToEncrypt = document.getElementById('secret').value
+  const stringToEncrypt = document.getElementById('secret').value;
+  //const sendToAddress = document.getElementById('sendaddr');
+  //console.log(`******** + ${sendToAddress}`)
+
   // User must posess at least 0.000001 ETH on eth
+  // const accessControlConditions = [
+  //   {
+  //     contractAddress: '',
+  //     standardContractType: '',
+  //     chain: 'polygon',
+  //     method: 'eth_getBalance',
+  //     parameters: [':sendToAddress', 'latest'],
+  //     returnValueTest: {
+  //       comparator: '>=',
+  //       value: '1000000000000',
+  //     },
+  //   },
+  // ]
   const accessControlConditions = [
     {
       contractAddress: '',
       standardContractType: '',
-      chain: 'ethereum',
-      method: 'eth_getBalance',
-      parameters: [':userAddress', 'latest'],
+      chain: 'polygon',
+      method: '',
+      parameters: [
+        ':userAddress',
+      ],
       returnValueTest: {
-        comparator: '>=',
-        value: '1000000000000',
-      },
-    },
+        comparator: '=',
+        value: "0x0Db0448c95cad6D82695aC27022D20633C81b387"
+      }
+    }
   ]
   const response = litCeramicIntegration
     .encryptAndWrite(stringToEncrypt, accessControlConditions)
