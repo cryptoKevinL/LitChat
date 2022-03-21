@@ -25,9 +25,29 @@ const updateAlert = (status: string, message: string) => {
 }
 const updateStreamID = (resp: string | String) => {
   streamID = resp as string
-  console.log('you now have this as your streamID', streamID)
+  console.log('$$$kl - you now have this as your streamID', streamID)
   // @ts-ignore
   document.getElementById('stream').innerText = resp
+
+  //Obj of data to send in future like a dummyDb
+  const data = { streamID: `${streamID}`, fromAddr: "0x219079f24Db6867F47Daefd57C3A549e819008B4", toAddr: "0x0Db0448c95cad6D82695aC27022D20633C81b387" };
+  //POST request with body equal on data in JSON format
+  fetch(' http://localhost:12345/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then((response) => response.json())
+  //Then with the data from the response in JSON...
+  .then((data) => {
+    console.log('$$$kl - Post to REST API:', data);
+  })
+  //Then with the error genereted...
+  .catch((error) => {
+    console.error('Post to REST API error!!!!!!!!!!!!:', error);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
