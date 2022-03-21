@@ -10,6 +10,7 @@ declare global {
 let litCeramicIntegration = new Integration('https://ceramic-clay.3boxlabs.com', 'polygon')
 
 let streamID = 'this should never work' // test data
+let selectedWalletAddress = "none"
 
 const updateAlert = (status: string, message: string) => {
   const alert = document.getElementById('alerts')
@@ -31,7 +32,8 @@ const updateStreamID = (resp: string | String) => {
 
   //Obj of data to send in future like a dummyDb
   const sendToAddress = document.getElementById('sendaddr').value;
-  const data = { streamID: `${streamID}`, fromAddr: "0x219079f24Db6867F47Daefd57C3A549e819008B4", toAddr: `${sendToAddress}` };
+  const commonName = document.getElementById('myname').value;
+  const data = { streamID: `${streamID}`, fromName: `${commonName}`, fromAddr: `${selectedWalletAddress}`, toAddr: `${sendToAddress}` };
   //POST request with body equal on data in JSON format
   fetch(' http://localhost:12345/users', {
     method: 'POST',
@@ -60,6 +62,9 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
   if (document.getElementById('stream') === null) {
     updateAlert('danger', `Error, please write to ceramic first so a stream can be read`)
   } else {
+    //console.log(window)
+    selectedWalletAddress = window.ethereum.selectedAddress
+    console.log('$$$kl - Selected Address:', selectedWalletAddress);
 
     //GET request to get messages for RX user
     fetch(' http://localhost:12345/users', {
@@ -71,15 +76,15 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
     .then((response) => response.json())
     //Then with the data from the response in JSON...
     .then((data) => {
-      console.log('$$$kl - GET to REST API:', data);
+      //console.log('$$$kl - GET to REST API:', data);
 
     // @ts-ignore
     //const test = document.getElementById('sendaddr').value;
     for(let i=0; i<data.length; i++){
       const streamToDecrypt = data[i].streamID
-      if(data[i].toAddr == "0x0Db0448c95cad6D82695aC27022D20633C81b387") {
+      if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
         //console.log('this is the streamID youre sending: ', streamToDecrypt)
-        document.getElementById('decryption').innerText = "From:" + data[i].fromAddr + ":\n"
+        document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
           (value) => (document.getElementById('decryption').innerText += value + "\n")
         )
@@ -100,6 +105,9 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
 document.getElementById('encryptLit')?.addEventListener('click', function () {
   console.log('chain in litCeramicIntegration: ', litCeramicIntegration.chain)
   // @ts-ignore
+  selectedWalletAddress = window.ethereum.selectedAddress
+  console.log('$$$kl - Selected Address:', selectedWalletAddress);
+
   const stringToEncrypt = document.getElementById('secret').value;
   const sendToAddress = document.getElementById('sendaddr').value;
   console.log(`$$$kl - + ${sendToAddress}`)
