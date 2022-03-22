@@ -82,6 +82,39 @@ document.addEventListener('DOMContentLoaded', function () {
   litCeramicIntegration.startLitClient(window)
 })
 
+// function addMessages(message){
+//     $(“#decryption).append(`
+//         <h4> ${message.name} </h4>
+//         <p>  ${message.message} </p>`)
+//     }
+
+function addMessageReceiver(message){
+    const div = document.createElement("div");
+    div.className = "container"
+    const para = document.createElement("p");
+    const node = document.createTextNode(`${message}`);
+    var mainspan = document.createElement('span');
+    mainspan.setAttribute('class', 'time-right');
+    const timeText = document.createTextNode("11:55");
+    mainspan.appendChild(timeText)
+    para.appendChild(node);  
+    div.appendChild(para)
+    div.appendChild(mainspan)
+    const element = document.getElementById("decryption"); 
+    element.append(div)  
+}
+
+function addMessageSender(message){
+    const div = document.createElement("div");
+    div.className = "container darker"
+    const para = document.createElement("p");
+    const node = document.createTextNode(`${message}`);
+    para.appendChild(node);  
+    div.appendChild(para)
+    const element = document.getElementById("decryption"); 
+    element.append(div)  
+}
+
 document.getElementById('readCeramic')?.addEventListener('click', () => {
   if (document.getElementById('stream') === null) {
     updateAlert('danger', `Error, please write to ceramic first so a stream can be read`)
@@ -110,7 +143,7 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
         //console.log('this is the streamID youre sending: ', streamToDecrypt)
         document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (document.getElementById('decryption').innerText += value + "\n")
+          (value) => (addMessageReceiver(value + "\n"))
         )
         console.log(response)
 
