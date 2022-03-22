@@ -24,17 +24,8 @@ const updateAlert = (status: string, message: string) => {
     }, 5000)
   }
 }
-const updateStreamID = (resp: string | String) => {
-  streamID = resp as string
-  console.log('$$$kl - you now have this as your streamID', streamID)
-  // @ts-ignore
-  document.getElementById('stream').innerText = resp
 
-  //Obj of data to send in future like a dummyDb
-  const sendToAddress = document.getElementById('sendaddr').value;
-  const commonName = document.getElementById('myname').value;
-  const data = { streamID: `${streamID}`, fromName: `${commonName}`, fromAddr: `${selectedWalletAddress}`, toAddr: `${sendToAddress}` };
-  //POST request with body equal on data in JSON format
+const fetchPost = (data) => {
   fetch(' http://localhost:12345/users', {
     method: 'POST',
     headers: {
@@ -51,6 +42,39 @@ const updateStreamID = (resp: string | String) => {
   .catch((error) => {
     console.error('Post to REST API error!!!!!!!!!!!!:', error);
   });
+}
+
+const fetchPut = (data, id) => {
+  fetch(` http://localhost:12345/users/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then((response) => response.json())
+  //Then with the data from the response in JSON...
+  .then((data) => {
+    console.log('$$$kl - PUT to REST API:', data);
+  })
+  //Then with the error genereted...
+  .catch((error) => {
+    console.error('PUT to REST API error!!!!!!!!!!!!:', error);
+  });
+}
+
+const updateStreamID = (resp: string | String) => {
+  streamID = resp as string
+  console.log('$$$kl - you now have this as your streamID', streamID)
+  // @ts-ignore
+  document.getElementById('stream').innerText = resp
+
+  //Obj of data to send in future like a dummyDb
+  const sendToAddress = document.getElementById('sendaddr').value;
+  const commonName = document.getElementById('myname').value;
+  const data = { streamID: `${streamID}`, fromName: `${commonName}`, fromAddr: `${selectedWalletAddress}`, toAddr: `${sendToAddress}`, read: false };
+  //POST request with body equal on data in JSON format
+  fetchPost(data)
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -89,6 +113,12 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
           (value) => (document.getElementById('decryption').innerText += value + "\n")
         )
         console.log(response)
+
+        //mark as read if box is checked
+        if(document.getElementById('readReceipts').checked) {
+          const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
+          fetchPut(putData, data[i].id)
+        }
       }
     }
 

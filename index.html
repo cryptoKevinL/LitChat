@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Lit/Ceramic Integration Playground</title>
+    <title>LitChat</title>
     <meta
       name="description"
-      content="Test the full stack of Ceramic Network components in a web browser."
+      content="Send/Receive encryped messages via crypto wallet address"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -132,18 +132,18 @@
           +
           <img id="logo" src="images/web-playground-logo.svg" alt="web playground logo" />
         </div>
-        <h1>Lit / Ceramic Web Playground</h1>
+        <h1>Lit Chat</h1>
         <p>
-          Test out the Lit / Ceramic integration.
+          This Chat is Lit!
           <br />
-          Encrypt with Lit and commit to the Ceramic network
+          Sent messages are encrypted with Lit and commited to the Ceramic network.
           <br />
-          then read from it back using ceramic and decrypt with Lit.
+          Received messages come via Ceramic and are decrypted with Lit.
         </p>
         <form>
           <br />
           <label for="fname">Name/Handle:</label>
-          <input type="text" id="myname" name="myname" value="kevinTheGreat45" /><br />
+          <input type="text" id="myname" name="myname" value="any common name..." /><br />
           <br />
         </form>
         <form>
@@ -204,6 +204,8 @@
             Read Messages and Decrypt w/ Lit
           </button>
         </div>
+        <input type="checkbox" id="readReceipts" name="readReceipts" value="sendrx">    
+        <label for="readReceipts"> Send Message Read Receipts </label><br>
         <div id="decryption"></div>
       </main>
     </div>
