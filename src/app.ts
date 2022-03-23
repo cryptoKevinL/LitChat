@@ -7,6 +7,7 @@ declare global {
   }
 }
 
+let restApiUrl = 'https://my-json-server.typicode.com/cryptoKevinL/LitChat-RestAPI/users'
 let litCeramicIntegration = new Integration('https://ceramic-clay.3boxlabs.com', 'polygon')
 
 let streamID = 'this should never work' // test data
@@ -26,7 +27,7 @@ const updateAlert = (status: string, message: string) => {
 }
 
 const fetchPost = (data) => {
-  fetch(' http://localhost:12345/users', {
+  fetch(` ${restApiUrl}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ const fetchPost = (data) => {
 }
 
 const fetchPut = (data, id) => {
-  fetch(` http://localhost:12345/users/${id}`, {
+  fetch(` ${restApiUrl} + '/' + ${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -68,6 +69,10 @@ const updateStreamID = (resp: string | String) => {
   console.log('$$$kl - you now have this as your streamID', streamID)
   // @ts-ignore
   document.getElementById('stream').innerText = resp
+
+  //idea here is to encrypt parameters in another Lit StreamID to protect user info/privacy
+  //so people cannot infer when messages were read, or both ends of the conversation
+  //public can only tell an individual is putting data out there.
 
   //Obj of data to send in future like a dummyDb
   const sendToAddress = document.getElementById('sendaddr').value;
@@ -120,8 +125,13 @@ function addMessageSender(message, fromName, wasRead){
     para.appendChild(node);  
     div.appendChild(para)
     div.appendChild(mainspan)
-    const element = document.querySelector('main');
-    element.append(div)  
+    const element = document.querySelector('main');  
+    element.append(div)
+}
+
+function clearMessages() {
+  //$("#main").load(" #main > *");
+  window.location.reload();
 }
 
 document.getElementById('readCeramic')?.addEventListener('click', () => {
@@ -137,8 +147,11 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
 })
 
 function updateChatData(){
+    //hacky for now, but what can you do in a week...
+    //clearMessages();
+
     //GET request to get off-chain data for RX user
-    fetch(' http://localhost:12345/users', {
+    fetch(` ${restApiUrl}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -155,7 +168,7 @@ function updateChatData(){
       const streamToDecrypt = data[i].streamID
       if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
         //console.log('this is the streamID youre sending: ', streamToDecrypt)
-        document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
+        //document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
           (value) => (addMessageReceiver(value + "\n", data[i].fromName))
         )
