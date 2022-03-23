@@ -36,7 +36,6 @@
     "web3modal": "^1.9.3"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.14",
     "@webpack-cli/serve": "^1.6.0",
     "did-jwt": "^5.2.0",
     "did-resolver": "^3.0.1",
