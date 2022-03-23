@@ -132,7 +132,12 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
     selectedWalletAddress = window.ethereum.selectedAddress
     console.log('$$$kl - Selected Address:', selectedWalletAddress);
 
-    //GET request to get messages for RX user
+    updateChatData();
+  }
+})
+
+function updateChatData(){
+    //GET request to get off-chain data for RX user
     fetch(' http://localhost:12345/users', {
       method: 'GET',
       headers: {
@@ -174,11 +179,9 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
     .catch((error) => {
       console.error('GET to REST API error!!!!!!!!!!!!:', error);
     });
-  }
-})
+}
 
 // encrypt with Lit and write to ceramic
-
 document.getElementById('encryptLit')?.addEventListener('click', function () {
   console.log('chain in litCeramicIntegration: ', litCeramicIntegration.chain)
   // @ts-ignore
@@ -238,49 +241,7 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
     .then((value) => updateStreamID(value))
   console.log(response)
 
-  
-    //GET request to get messages for RX user
-    fetch(' http://localhost:12345/users', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then((response) => response.json())
-    //Then with the data from the response in JSON...
-    .then((data) => {
-      //console.log('$$$kl - GET to REST API:', data);
-
-    // @ts-ignore
-    //const test = document.getElementById('sendaddr').value;
-    for(let i=0; i<data.length; i++){
-      const streamToDecrypt = data[i].streamID
-      if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
-        //console.log('this is the streamID youre sending: ', streamToDecrypt)
-        document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
-        const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (addMessageReceiver(value + "\n", data[i].fromName))
-        )
-
-        //mark as read if box is checked
-        if(document.getElementById('readReceipts').checked) {
-          const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
-          fetchPut(putData, data[i].id)
-        }
-      }
-      //print sent messages
-      if(data[i].fromAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
-        const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (addMessageSender(value + "\n", data[i].fromName, data[i].read))
-        )
-      }
-    }
-
-    })
-    //Then with the error genereted...
-    .catch((error) => {
-      console.error('GET to REST API error!!!!!!!!!!!!:', error);
-    });
+  updateChatData();
 
   // const evmContractConditions = [
   //   {
