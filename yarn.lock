@@ -8493,7 +8493,7 @@ node-web-streams@^0.2.1:
   integrity sha1-CH52u+t+jcVmhrJdtOYMX/nbCR8=
   dependencies:
     is-stream "^1.1.0"
-    web-streams-polyfill "git://github.com/gwicke/web-streams-polyfill#spec_performance_improvements"
+    web-streams-polyfill "https://github.com/gwicke/web-streams-polyfill#spec_performance_improvements"
 
 normalize-hex@0.0.2:
   version "0.0.2"
@@ -12063,9 +12063,9 @@ web-encoding@^1.0.2, web-encoding@^1.0.6:
   optionalDependencies:
     "@zxing/text-encoding" "0.9.0"
 
-"web-streams-polyfill@git://github.com/gwicke/web-streams-polyfill#spec_performance_improvements":
+"https://github.com/gwicke/web-streams-polyfill#spec_performance_improvements":
   version "1.2.2"
-  resolved "git://github.com/gwicke/web-streams-polyfill#42c488428adea1dc0c0245014e4896ad456b1ded"
+  resolved "https://github.com/gwicke/web-streams-polyfill#42c488428adea1dc0c0245014e4896ad456b1ded"
 
 web3-provider-engine@15.0.4:
   version "15.0.4"
