@@ -122,11 +122,13 @@
         border-radius: 5px;
         padding: 10px;
         margin: 10px 0;
+        text-align: left;
       }
 
       .darker {
         border-color: #ccc;
         background-color: #ddd;
+        text-align: right;
       }
 
       .container::after {
@@ -254,28 +256,6 @@
         <input type="checkbox" id="readReceipts" name="readReceipts" value="sendrx">    
         <label for="readReceipts"> Send Message Read Receipts </label><br>
         <div id="decryption"></div>
-        <h2>Chat Messages</h2>
-
-        <div class="container">
-          <p>Hello. How are you today?</p>
-          <span class="time-right">11:00</span>
-        </div>
-
-        <div class="container darker">
-          <p>Hey! I'm fine. Thanks for asking!</p>
-          <span class="time-left">11:01</span>
-        </div>
-
-        <div class="container">
-          <p>Sweet! So, what do you wanna do today?</p>
-          <span class="time-right">11:02</span>
-        </div>
-
-        <div class="container darker">
-          <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-          <span class="time-left">11:05</span>
-        </div>
-
       </main>
     </div>
   </body>

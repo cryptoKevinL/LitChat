@@ -88,30 +88,39 @@ document.addEventListener('DOMContentLoaded', function () {
 //         <p>  ${message.message} </p>`)
 //     }
 
-function addMessageReceiver(message){
+function addMessageReceiver(message, fromName){
     const div = document.createElement("div");
     div.className = "container"
     const para = document.createElement("p");
     const node = document.createTextNode(`${message}`);
     var mainspan = document.createElement('span');
-    mainspan.setAttribute('class', 'time-right');
-    const timeText = document.createTextNode("11:55");
+    mainspan.setAttribute('class', 'time-left');
+    const timeText = document.createTextNode(`${fromName}`);
     mainspan.appendChild(timeText)
     para.appendChild(node);  
     div.appendChild(para)
     div.appendChild(mainspan)
-    const element = document.getElementById("decryption"); 
+    const element = document.querySelector('main');
     element.append(div)  
 }
 
-function addMessageSender(message){
+function addMessageSender(message, fromName, wasRead){
     const div = document.createElement("div");
     div.className = "container darker"
     const para = document.createElement("p");
-    const node = document.createTextNode(`${message}`);
+    let node;
+    if(wasRead)
+       node = document.createTextNode(`${message}` + " (READ)");
+    else
+       node = document.createTextNode(`${message}` + " (unread)");
+    var mainspan = document.createElement('span');
+    mainspan.setAttribute('class', 'time-right');
+    let timeText = document.createTextNode(`${fromName}`);
+    mainspan.appendChild(timeText)
     para.appendChild(node);  
     div.appendChild(para)
-    const element = document.getElementById("decryption"); 
+    div.appendChild(mainspan)
+    const element = document.querySelector('main');
     element.append(div)  
 }
 
@@ -143,15 +152,20 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
         //console.log('this is the streamID youre sending: ', streamToDecrypt)
         document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (addMessageReceiver(value + "\n"))
+          (value) => (addMessageReceiver(value + "\n", data[i].fromName))
         )
-        console.log(response)
 
         //mark as read if box is checked
         if(document.getElementById('readReceipts').checked) {
           const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
           fetchPut(putData, data[i].id)
         }
+      }
+      //print sent messages
+      if(data[i].fromAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
+        const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
+          (value) => (addMessageSender(value + "\n", data[i].fromName, data[i].read))
+        )
       }
     }
 
@@ -202,12 +216,71 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
         comparator: '=',
         value: `${sendToAddress}`
       }
+    },
+    {"operator": "or"},
+    {
+      contractAddress: '',
+      standardContractType: '',
+      chain: 'polygon',
+      method: '',
+      parameters: [
+        ':userAddress',
+      ],
+      returnValueTest: {
+        comparator: '=',
+        value: `${selectedWalletAddress}`
+      }
     }
   ]
+
   const response = litCeramicIntegration
     .encryptAndWrite(stringToEncrypt, accessControlConditions)
     .then((value) => updateStreamID(value))
   console.log(response)
+
+  
+    //GET request to get messages for RX user
+    fetch(' http://localhost:12345/users', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then((response) => response.json())
+    //Then with the data from the response in JSON...
+    .then((data) => {
+      //console.log('$$$kl - GET to REST API:', data);
+
+    // @ts-ignore
+    //const test = document.getElementById('sendaddr').value;
+    for(let i=0; i<data.length; i++){
+      const streamToDecrypt = data[i].streamID
+      if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
+        //console.log('this is the streamID youre sending: ', streamToDecrypt)
+        document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
+        const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
+          (value) => (addMessageReceiver(value + "\n", data[i].fromName))
+        )
+
+        //mark as read if box is checked
+        if(document.getElementById('readReceipts').checked) {
+          const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
+          fetchPut(putData, data[i].id)
+        }
+      }
+      //print sent messages
+      if(data[i].fromAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
+        const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
+          (value) => (addMessageSender(value + "\n", data[i].fromName, data[i].read))
+        )
+      }
+    }
+
+    })
+    //Then with the error genereted...
+    .catch((error) => {
+      console.error('GET to REST API error!!!!!!!!!!!!:', error);
+    });
 
   // const evmContractConditions = [
   //   {
