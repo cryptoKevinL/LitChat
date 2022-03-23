@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-let restApiUrl = 'https://my-json-server.typicode.com/cryptoKevinL/LitChat-RestAPI/users'
+let restApiUrl = 'https://litchatrestapi.herokuapp.com/users'
 let litCeramicIntegration = new Integration('https://ceramic-clay.3boxlabs.com', 'polygon')
 
 let streamID = 'this should never work' // test data
@@ -46,7 +46,7 @@ const fetchPost = (data) => {
 }
 
 const fetchPut = (data, id) => {
-  fetch(` ${restApiUrl} + '/' + ${id}`, {
+  fetch(` ${restApiUrl}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ function addMessageSender(message, fromName, wasRead){
 
 function clearMessages() {
   //$("#main").load(" #main > *");
-  window.location.reload();
+  location.reload()
 }
 
 document.getElementById('readCeramic')?.addEventListener('click', () => {
@@ -149,6 +149,7 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
 function updateChatData(){
     //hacky for now, but what can you do in a week...
     //clearMessages();
+    //location.reload();
 
     //GET request to get off-chain data for RX user
     fetch(` ${restApiUrl}`, {
@@ -190,6 +191,7 @@ function updateChatData(){
     })
     //Then with the error genereted...
     .catch((error) => {
+      document.getElementById('decryption').innerText = "****Please Ensure You have MetaMask installed and connected!!!!"
       console.error('GET to REST API error!!!!!!!!!!!!:', error);
     });
 }
