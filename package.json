@@ -10,7 +10,7 @@
     "url": "git+https://github.com/ceramicstudio/web-playground.git"
   },
   "scripts": {
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --public-url http://lit-chat-y2zfe.ondigitalocean.app",
     "lint": "eslint src",
     "start": "parcel index.html"
   },
