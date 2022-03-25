@@ -12,7 +12,8 @@
   "scripts": {
     "build": "parcel build index.html --public-url ./",
     "lint": "eslint src",
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@3id/connect": "^0.1.6",
@@ -31,6 +32,7 @@
     "lit-ceramic-sdk": "^1.1.12",
     "lit-js-sdk": "^1.1.121",
     "multiformats": "~4.6.1",
+    "patch-package": "^6.4.7",
     "skynet-js": "^4.0.5-beta",
     "uint8arrays": "^3.0.0",
     "web3modal": "^1.9.3"
