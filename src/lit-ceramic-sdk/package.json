@@ -1,0 +1,35 @@
+{
+  "name": "lit-ceramic-sdk",
+  "version": "1.1.12",
+  "description": "An integration of Lit Protocol with Ceramic Network",
+  "license": "MIT",
+  "repository": "LIT-Protocol/CeramicIntegration",
+  "main": "dist/index.js",
+  "keywords": [
+    "lit",
+    "ceramic",
+    "package"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:docs": "documentation build src/integration.ts --parse-extension ts -f md -o documentation/integration.md --shallow && documentation build src/lit.ts --parse-extension ts -f md -o documentation/lit.md --shallow && documentation build src/ceramic.ts --parse-extension ts -f md -o documentation/ceramic.md --shallow && documentation build src/client.ts --parse-extension ts -f md -o documentation/client.md --shallow && doctoc README.md"
+  },
+  "dependencies": {
+    "@3id/connect": "^0.1.6",
+    "@ceramicnetwork/3id-did-resolver": "^1.2.7",
+    "@ceramicnetwork/common": "^1.1.0",
+    "@ceramicnetwork/http-client": "^1.0.7",
+    "@ceramicstudio/idx": "^0.12.1",
+    "@ceramicstudio/idx-tools": "^0.11.0",
+    "dag-jose": "^0.3.0",
+    "dids": "^2.1.0",
+    "documentation": "^13.2.5",
+    "http-server": "^14.0.0",
+    "key-did-resolver": "^1.2.0",
+    "lit-js-sdk": "^1.1.121",
+    "multiformats": "~4.6.1",
+    "skynet-js": "^4.0.5-beta",
+    "typescript": "^4.5.4",
+    "uint8arrays": "^3.0.0"
+  }
+}
