@@ -1,5 +1,5 @@
 import { DID } from 'dids'
-import { Integration } from 'lit-ceramic-sdk'
+import { Integration } from '../lit-ceramic-sdk'
 
 declare global {
   interface Window {
