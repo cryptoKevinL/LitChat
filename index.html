@@ -38,7 +38,7 @@
         font-size: 1.2rem;
       }
       main {
-        max-width: 600px;
+        /* max-width: 900px; */
       }
       img {
         height: 100px;
@@ -188,35 +188,12 @@
       </header>
 
       <main class="container center">
-        <div class="row">
-          <div class="col-xs-12 space-around">
-            <br />
-            <br />
-            <div id="stream"></div>
-          </div>
-          <div class="col-xs-12 col-lg-6">
-            <iframe
-              class="documentation"
-              src="https://developers.ceramic.network/build/javascript/quick-start/"
-              id="ceramic_docs"
-            >
-            </iframe>
-          </div>
-          <div class="col-xs-12 col-lg-6 text-right">
-            <iframe
-              class="documentation"
-              src="https://developers.idx.xyz/build/quick-start/"
-              id="idx_docs"
-            ></iframe>
-          </div>
-        </div>
-
         <div id="encryptLit">
           <button
             id="encryptLit"
             type="button"
-            class="btn btn-primary center"
-            style="display: inherit; margin: 20px auto"
+            class="btn btn-primary right"
+            style="display: inherit; margin: 10px auto"
           >
             Encrypt Message w/ Lit + Send
           </button>
@@ -226,15 +203,32 @@
           <button
             id="readCeramic"
             type="button"
-            class="btn btn-primary center"
-            style="display: inherit; margin: 20px auto"
+            class="btn btn-primary left"
+            style="display: inherit; margin: 10px auto"
           >
             Read Messages and Decrypt w/ Lit
           </button>
         </div>
-        <input type="checkbox" id="readReceipts" name="readReceipts" value="sendrx">    
-        <label for="readReceipts"> Send Message Read Receipts </label><br>
-        <div id="decryption"></div>
+
+        <form>
+          <label for="fname">Message ID to Unsend:</label>
+          <input type="text" id="unsendmsg" name="unsendmsg" value="" />
+ 
+        <div id="deleteMessage">
+          <button
+            id="deleteMessage"
+            type="button"
+            class="btn btn-primary left"
+            style="display: inherit;"
+          >
+            Unsend
+          </button>
+        </div>
+
+        <div id="readReceiptsDiv">
+          <input type="checkbox" id="readReceipts" name="readReceipts" value="True">    
+          <label for="readReceipts"> Send Message Read Receipts </label><br>
+        </div>
       </main>
     </div>
   </body>

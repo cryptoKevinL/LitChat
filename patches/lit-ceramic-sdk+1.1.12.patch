@@ -1,0 +1,92 @@
+diff --git a/node_modules/lit-ceramic-sdk/src/integration.ts b/node_modules/lit-ceramic-sdk/src/integration.ts
+index 685d8b7..00ca97e 100644
+--- a/node_modules/lit-ceramic-sdk/src/integration.ts
++++ b/node_modules/lit-ceramic-sdk/src/integration.ts
+@@ -2,7 +2,7 @@
+ import { createIDX } from "./idx";
+ import type { CeramicApi } from "@ceramicnetwork/common";
+ import type { DID } from "dids";
+-import { _encryptWithLit, _decryptWithLit } from "./lit";
++import { _encryptWithLit, _decryptWithLit, _saveEncryptionKey } from "./lit";
+ import { _startLitClient } from "./client";
+ import {
+   _authenticateCeramic,
+@@ -100,4 +100,36 @@ export class Integration {
+       return `something went wrong decrypting: ${error} \n StreamID sent: ${streamID}`;
+     }
+   }
++
++  async updateAccessConditionsForStream(
++      streamID: String,
++      accessControlConditions: Array<Object>
++    ): Promise<String> {
++      try {
++        const a = await _authenticateCeramic(this.ceramicPromise);
++        const en = await _readCeramic(a, streamID);
++        // decode data returned from ceramic
++        const deco = await _decodeFromB64(en);
++        console.log("data from ceramic: ", deco);
++
++        // litCeramicIntegration.saveEncryptionKey({
++        //   accessControlConditions: newAccessControlConditions,
++        //   encryptedSymmetricKey,
++        //   authSig,
++        //   chain,
++        //   permanant: false,
++        // });
++
++        const result = await _saveEncryptionKey(
++          accessControlConditions,
++          deco[1], //encryptedSymmetricKey
++          this.chain
++        );
++        console.log("update access result: ", result);
++        
++        return result;
++      } catch (error) {
++        return `something went wrong encrypting: ${error}`;
++      }
++    }
+ }
+diff --git a/node_modules/lit-ceramic-sdk/src/lit.ts b/node_modules/lit-ceramic-sdk/src/lit.ts
+index 83baf2c..3552615 100644
+--- a/node_modules/lit-ceramic-sdk/src/lit.ts
++++ b/node_modules/lit-ceramic-sdk/src/lit.ts
+@@ -145,3 +145,37 @@ export async function _decryptWithLit(
+   const decryptedString = await decryptedFiles["string.txt"].async("text");
+   return decryptedString;
+ }
++
++// litCeramicIntegration.saveEncryptionKey({
++//   accessControlConditions: newAccessControlConditions,
++//   encryptedSymmetricKey,
++//   authSig,
++//   chain,
++//   permanant: false,
++// });
++export async function _saveEncryptionKey(
++  accessControlConditions: Array<any>,
++  encryptedSymmKey: Uint8Array,
++  chain: String
++): Promise<String> {
++  let authSig = await LitJsSdk.checkAndSignAuthMessage({
++    chain,
++  });
++  // encrypted blob, sym key
++  console.log("encryptedSymKey", encryptedSymmKey);
++  const toDecrypt = uint8ArrayToString(encryptedSymmKey, "base16");
++  console.log("toDecrypt", toDecrypt);
++  // decrypt the symmetric key
++  let success;
++  success = await window.litNodeClient.saveEncryptionKey({
++    accessControlConditions,
++    toDecrypt,
++    chain,
++    authSig,
++  });
++  
++  console.log("saveEncryptionKey: ", success);
++
++  const decryptedString = ""
++  return decryptedString;
++}

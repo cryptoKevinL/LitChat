@@ -67,12 +67,6 @@ const fetchPut = (data, id) => {
 const updateStreamID = (resp: string | String) => {
   streamID = resp as string
   console.log('$$$kl - you now have this as your streamID', streamID)
-  // @ts-ignore
-  document.getElementById('stream').innerText = resp
-
-  //idea here is to encrypt parameters in another Lit StreamID to protect user info/privacy
-  //so people cannot infer when messages were read, or both ends of the conversation
-  //public can only tell an individual is putting data out there.
 
   //Obj of data to send in future like a dummyDb
   const sendToAddress = document.getElementById('sendaddr').value;
@@ -86,12 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('DOMContent.........')
   litCeramicIntegration.startLitClient(window)
 })
-
-// function addMessages(message){
-//     $(“#decryption).append(`
-//         <h4> ${message.name} </h4>
-//         <p>  ${message.message} </p>`)
-//     }
 
 function addMessageReceiver(message, fromName){
     const div = document.createElement("div");
@@ -135,14 +123,14 @@ function clearMessages() {
 }
 
 document.getElementById('readCeramic')?.addEventListener('click', () => {
-  if (document.getElementById('stream') === null) {
-    updateAlert('danger', `Error, please write to ceramic first so a stream can be read`)
-  } else {
-    //console.log(window)
+  try {
     selectedWalletAddress = window.ethereum.selectedAddress
     console.log('$$$kl - Selected Address:', selectedWalletAddress);
 
     updateChatData();
+  }
+  catch {
+    updateAlert('danger', `"Please Ensure You have MetaMask installed and connected"`) 
   }
 })
 
@@ -168,20 +156,24 @@ function updateChatData(){
     for(let i=0; i<data.length; i++){
       const streamToDecrypt = data[i].streamID
       if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
-        //console.log('this is the streamID youre sending: ', streamToDecrypt)
-        //document.getElementById('decryption').innerText = "From: (" + data[i].fromName + ") " + data[i].fromAddr.toLowerCase() + ":\n"
+        console.log('$$$kl - this is the TO streamID youre decrypting: ', streamToDecrypt)
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
           (value) => (addMessageReceiver(value + "\n", data[i].fromName))
         )
 
         //mark as read if box is checked
         if(document.getElementById('readReceipts').checked) {
+          console.log('$$$kl - marking READ for streamID: ', streamToDecrypt)
           const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
           fetchPut(putData, data[i].id)
+        }
+        else {
+          console.log('$$$kl - read receipts is not checked, going rogue')
         }
       }
       //print sent messages
       if(data[i].fromAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
+        console.log('$$$kl - this is the FROM streamID youre decrypting: ', streamToDecrypt)
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
           (value) => (addMessageSender(value + "\n", data[i].fromName, data[i].read))
         )
@@ -191,7 +183,7 @@ function updateChatData(){
     })
     //Then with the error genereted...
     .catch((error) => {
-      document.getElementById('decryption').innerText = "****Please Ensure You have MetaMask installed and connected!!!!"
+      updateAlert('danger', `"Please Ensure You have MetaMask installed and connected"`)
       console.error('GET to REST API error!!!!!!!!!!!!:', error);
     });
 }
@@ -207,20 +199,6 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
   const sendToAddress = document.getElementById('sendaddr').value;
   console.log(`$$$kl - + ${sendToAddress}`)
 
-  // User must posess at least 0.000001 ETH on eth
-  // const accessControlConditions = [
-  //   {
-  //     contractAddress: '',
-  //     standardContractType: '',
-  //     chain: 'polygon',
-  //     method: 'eth_getBalance',
-  //     parameters: [':sendToAddress', 'latest'],
-  //     returnValueTest: {
-  //       comparator: '>=',
-  //       value: '1000000000000',
-  //     },
-  //   },
-  // ]
   const accessControlConditions = [
     {
       contractAddress: '',
@@ -257,62 +235,70 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
   console.log(response)
 
   updateChatData();
+})
 
-  // const evmContractConditions = [
-  //   {
-  //     contractAddress: '0xb71a679cfff330591d556c4b9f21c7739ca9590c',
-  //     functionName: 'members',
-  //     functionParams: [':userAddress'],
-  //     functionAbi: {
-  //       constant: true,
-  //       inputs: [
-  //         {
-  //           name: '',
-  //           type: 'address',
-  //         },
-  //       ],
-  //       name: 'members',
-  //       outputs: [
-  //         {
-  //           name: 'delegateKey',
-  //           type: 'address',
-  //         },
-  //         {
-  //           name: 'shares',
-  //           type: 'uint256',
-  //         },
-  //         {
-  //           name: 'loot',
-  //           type: 'uint256',
-  //         },
-  //         {
-  //           name: 'exists',
-  //           type: 'bool',
-  //         },
-  //         {
-  //           name: 'highestIndexYesVote',
-  //           type: 'uint256',
-  //         },
-  //         {
-  //           name: 'jailed',
-  //           type: 'uint256',
-  //         },
-  //       ],
-  //       payable: false,
-  //       stateMutability: 'view',
-  //       type: 'function',
-  //     },
-  //     chain: 'xdai',
-  //     returnValueTest: {
-  //       key: 'shares',
-  //       comparator: '>=',
-  //       value: '1',
-  //     },
-  //   },
-  // ]
 
-  // const response = litCeramicIntegration
-  //   .encryptAndWrite(stringToEncrypt, evmContractConditions, 'evmContractConditions')
-  //   .then((value) => updateStreamID(value))
-  // console.log(response)
+// encrypt with Lit and write to ceramic
+document.getElementById('deleteMessage')?.addEventListener('click', function () {
+  // @ts-ignore
+  selectedWalletAddress = window.ethereum.selectedAddress
+  console.log('$$$kl - unsending message from:', selectedWalletAddress);
+  
+  const sendToAddress = document.getElementById('sendaddr').value;
+  const newAccessControlConditions = [
+    {
+      contractAddress: '',
+      standardContractType: '',
+      chain: 'polygon',
+      method: '',
+      parameters: [
+        ':userAddress',
+      ],
+      returnValueTest: {
+        comparator: '=',
+        value: `${sendToAddress}`
+      }
+    },
+    {"operator": "or"},
+    {
+      contractAddress: '',
+      standardContractType: '',
+      chain: 'polygon',
+      method: '',
+      parameters: [
+        ':userAddress',
+      ],
+      returnValueTest: {
+        comparator: '=',
+        value: `${selectedWalletAddress}`
+      }
+    }
+  ]
+
+  const idToChange = document.getElementById('unsendmsg').value;
+  console.log('$$$kl - ID to Change:', idToChange);
+
+  //get the streamID of message id: N
+  //GET request to get off-chain data for RX user
+  fetch(` ${restApiUrl}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  .then((response) => response.json())
+  //Then with the data from the response in JSON...
+  .then((data) => {
+    // @ts-ignore
+    for(let i=0; i<data.length; i++){
+        const streamToUpdate = data[i].streamID
+        if(data[i].id == idToChange) {
+          console.log('$$$kl - this is the streamID youre updating permissions on: ', streamToUpdate)
+          
+          const newEncryptedSymmetricKey =
+          litCeramicIntegration.updateAccess(streamToUpdate, newAccessControlConditions).then((value) => console.log(value));
+        }
+      }
+    }
+  );
 })
