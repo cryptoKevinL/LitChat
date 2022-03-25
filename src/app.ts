@@ -82,10 +82,16 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function addMessageReceiver(message, fromName, restApiMsgId){
+  console.log("adding message:", message)
+  if(message === "FALSE"){
+    console.log("updating message: ", message)
+    message = "<MSG UNSENT>" //signal that the sender undsent the original message by removing decryption permissions
+  }
+
     const div = document.createElement("div");
     div.className = "container"
     const para = document.createElement("p");
-    const node = document.createTextNode(`${message}` + "(msgId:" + `${restApiMsgId}` + ")");
+    const node = document.createTextNode(`${message}` + "\n" + "(msgId:" + `${restApiMsgId}` + ")");
     var mainspan = document.createElement('span');
     mainspan.setAttribute('class', 'time-left');
     const timeText = document.createTextNode(`${fromName}`);
@@ -158,7 +164,7 @@ function updateChatData(){
       if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
         console.log('$$$kl - this is the TO streamID youre decrypting: ', streamToDecrypt)
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (addMessageReceiver(value + "\n", data[i].fromName, data[i].id))
+          (value) => (addMessageReceiver(value, data[i].fromName, data[i].id))
         )
 
         //mark as read if box is checked

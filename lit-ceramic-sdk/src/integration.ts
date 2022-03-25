@@ -101,7 +101,8 @@ export class Integration {
 
       return decrypt;
     } catch (error) {
-      return `something went wrong decrypting: ${error} \n StreamID sent: ${streamID}`;
+      console.log(`something went wrong decrypting: ${error} \n StreamID sent: ${streamID}`);
+      return "FALSE"
     }
   }
 
