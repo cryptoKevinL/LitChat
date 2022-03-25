@@ -10,6 +10,7 @@ import {
   _writeCeramic,
   _readCeramic,
   _decodeFromB64,
+  _updateCeramic
 } from "./ceramic";
 
 declare global {
@@ -122,8 +123,38 @@ export class Integration {
           this.chain
         );
         console.log("$$$kl - update access result: ", result);
+
+        //deco mapping:
+        // encryptedZip: Uint8Array,
+        // encryptedSymmKey: Uint8Array,
+        // accessControlConditions: Array<any>,
+        // chain: string,
+        // accessControlConditionType: S
+
+        // [
+        //   encryptedZipBase64,
+        //   encryptedSymmetricKeyBase64,
+        //   accessControlConditions,
+        //   chain,
+        //   accessControlConditionType,
+        // ]
+
+        const newContent = 
+        [
+          deco[0],
+          deco[1],
+          newAccessControlConditions,
+          deco[3],
+          deco[4],
+        ]
+
+        //save the access conditions back to Ceramic
+        console.log("$$$kl - saving new ceramic access conditions: ", newContent, newAccessControlConditions);
         
-        return result;
+        const result2 = await _updateCeramic(a, streamID, newContent);
+        console.log("$$$kl - update ceramic access conditions: ", streamID, result);
+        
+        return result2;
       } catch (error) {
         return `$$$kl - something went wrong encrypting: ${error}`;
       }

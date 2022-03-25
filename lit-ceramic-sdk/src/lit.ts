@@ -19,7 +19,7 @@ export function encodeb64(uintarray: any) {
  * @param {Blob} blob what you'd like to encode
  * @returns {Promise<String>} returns a string of b64
  */
-function blobToBase64(blob: Blob) {
+export function blobToBase64(blob: Blob) {
   return new Promise((resolve, _) => {
     const reader = new FileReader();
     reader.onloadend = () =>

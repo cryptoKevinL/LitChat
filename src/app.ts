@@ -246,20 +246,20 @@ document.getElementById('unsendMessage')?.addEventListener('click', function () 
   
   const sendToAddress = document.getElementById('sendaddr').value;
   const newAccessControlConditions = [
-    {
-      contractAddress: '',
-      standardContractType: '',
-      chain: 'polygon',
-      method: '',
-      parameters: [
-        ':userAddress',
-      ],
-      returnValueTest: {
-        comparator: '=',
-        value: `${sendToAddress}`
-      }
-    },
-    {"operator": "or"},
+    // {
+    //   contractAddress: '',
+    //   standardContractType: '',
+    //   chain: 'polygon',
+    //   method: '',
+    //   parameters: [
+    //     ':userAddress',
+    //   ],
+    //   returnValueTest: {
+    //     comparator: '=',
+    //     value: `${selectedWalletAddress}`
+    //   }
+    // },
+    // {"operator": "or"},
     {
       contractAddress: '',
       standardContractType: '',
@@ -299,7 +299,7 @@ document.getElementById('unsendMessage')?.addEventListener('click', function () 
           //docs say this new key does not change, so we don't need to do anything with it.
           const newEncryptedSymmetricKey =
           litCeramicIntegration.updateAccess(streamToUpdate, newAccessControlConditions).then((value) => console.log(value));
-          console.log(newEncryptedSymmetricKey)
+          //console.log(newEncryptedSymmetricKey)
         }
       }
     }
