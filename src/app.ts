@@ -108,10 +108,12 @@ function addMessageSender(message, fromName, wasRead, restApiMsgId){
     div.className = "container darker"
     const para = document.createElement("p");
     let node;
-    if(wasRead)
+    if(wasRead == true)
        node = document.createTextNode(`${message}` + " (READ) (msgId:" + `${restApiMsgId}` + ")");
+    else if(wasRead == "unsent")
+       node = document.createTextNode(`${message}` + " (UNSENT) (msgId:" + `${restApiMsgId}` + ")");
     else
-       node = document.createTextNode(`${message}` + " (unread) (msgId:" + `${restApiMsgId}` + ")");
+       node = document.createTextNode(`${message}` + " (UNREAD) (msgId:" + `${restApiMsgId}` + ")");
     var mainspan = document.createElement('span');
     mainspan.setAttribute('class', 'time-right');
     let timeText = document.createTextNode(`${fromName}`);
@@ -168,7 +170,7 @@ function updateChatData(){
         )
 
         //mark as read if box is checked
-        if(document.getElementById('readReceipts').checked) {
+        if(document.getElementById('readReceipts').checked && data[i].read != "unsent") {
           console.log('$$$kl - marking READ for streamID: ', streamToDecrypt)
           const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
           fetchPut(putData, data[i].id)
@@ -240,7 +242,8 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
     .then((value) => updateStreamID(value))
   console.log(response)
 
-  updateChatData();
+  //this seems too fast to update - need async for call above or just better overall UI
+  //updateChatData();
 })
 
 
@@ -306,6 +309,10 @@ document.getElementById('unsendMessage')?.addEventListener('click', function () 
           const newEncryptedSymmetricKey =
           litCeramicIntegration.updateAccess(streamToUpdate, newAccessControlConditions).then((value) => console.log(value));
           //console.log(newEncryptedSymmetricKey)
+
+          //update reader side to show unsent 
+          const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: "unsent" }
+          fetchPut(putData, data[i].id)
         }
       }
     }
