@@ -213,10 +213,11 @@
         <form>
           <label for="fname">Message ID to Unsend:</label>
           <input type="text" id="unsendmsg" name="unsendmsg" value="" />
+        </form>
  
-        <div id="deleteMessage">
+        <div id="unsendMessageDiv">
           <button
-            id="deleteMessage"
+            id="unsendMessage"
             type="button"
             class="btn btn-primary left"
             style="display: inherit;"
@@ -229,7 +230,25 @@
           <input type="checkbox" id="readReceipts" name="readReceipts" value="True">    
           <label for="readReceipts"> Send Message Read Receipts </label><br>
         </div>
+
+        
       </main>
+      <form>
+        <label for="fname">Message ID to Delete from RestAPI (for debug):</label>
+        <input type="text" id="deletemsg" name="deletemsg" value="" />
+      </form>
+
+      <div id="deleteMessageDiv">
+        <button
+          id="deleteMessage"
+          type="button"
+          class="btn btn-primary left"
+          style="display: inherit;"
+        >
+          Delete
+        </button>
+      </div>
+
     </div>
   </body>
   <script type="module" src="src/app.ts"></script>

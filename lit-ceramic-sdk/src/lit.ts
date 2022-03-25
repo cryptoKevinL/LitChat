@@ -164,8 +164,8 @@ export async function _saveEncryptionKey(
     chain,
   });
   // encrypted blob, sym key
-  console.log("$$$kl - encryptedSymKey entered: ", encryptedSymmetricKey);
-  console.log("$$$kl - authSig: ", authSig);
+  // console.log("$$$kl - encryptedSymKey entered: ", encryptedSymmetricKey);
+  // console.log("$$$kl - authSig: ", authSig);
 
   // const newAccessControlConditions = [
   //   {
@@ -191,6 +191,6 @@ export async function _saveEncryptionKey(
       chain,
       permanant: false,
     });
-  console.log("$$$kl - updated the condition");
+  console.log("$$$kl - updated the access control condition");
   return newEncryptedSymmetricKey;
 }

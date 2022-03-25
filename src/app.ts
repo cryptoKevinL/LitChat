@@ -81,11 +81,11 @@ document.addEventListener('DOMContentLoaded', function () {
   litCeramicIntegration.startLitClient(window)
 })
 
-function addMessageReceiver(message, fromName){
+function addMessageReceiver(message, fromName, restApiMsgId){
     const div = document.createElement("div");
     div.className = "container"
     const para = document.createElement("p");
-    const node = document.createTextNode(`${message}`);
+    const node = document.createTextNode(`${message}` + "(msgId:" + `${restApiMsgId}` + ")");
     var mainspan = document.createElement('span');
     mainspan.setAttribute('class', 'time-left');
     const timeText = document.createTextNode(`${fromName}`);
@@ -97,15 +97,15 @@ function addMessageReceiver(message, fromName){
     element.append(div)  
 }
 
-function addMessageSender(message, fromName, wasRead){
+function addMessageSender(message, fromName, wasRead, restApiMsgId){
     const div = document.createElement("div");
     div.className = "container darker"
     const para = document.createElement("p");
     let node;
     if(wasRead)
-       node = document.createTextNode(`${message}` + " (READ)");
+       node = document.createTextNode(`${message}` + " (READ) (msgId:" + `${restApiMsgId}` + ")");
     else
-       node = document.createTextNode(`${message}` + " (unread)");
+       node = document.createTextNode(`${message}` + " (unread) (msgId:" + `${restApiMsgId}` + ")");
     var mainspan = document.createElement('span');
     mainspan.setAttribute('class', 'time-right');
     let timeText = document.createTextNode(`${fromName}`);
@@ -158,7 +158,7 @@ function updateChatData(){
       if(data[i].toAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
         console.log('$$$kl - this is the TO streamID youre decrypting: ', streamToDecrypt)
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (addMessageReceiver(value + "\n", data[i].fromName))
+          (value) => (addMessageReceiver(value + "\n", data[i].fromName, data[i].id))
         )
 
         //mark as read if box is checked
@@ -175,7 +175,7 @@ function updateChatData(){
       if(data[i].fromAddr.toLowerCase() == selectedWalletAddress.toLowerCase()) {
         console.log('$$$kl - this is the FROM streamID youre decrypting: ', streamToDecrypt)
         const response = litCeramicIntegration.readAndDecrypt(streamToDecrypt).then(
-          (value) => (addMessageSender(value + "\n", data[i].fromName, data[i].read))
+          (value) => (addMessageSender(value + "\n", data[i].fromName, data[i].read, data[i].id))
         )
       }
     }
@@ -238,8 +238,8 @@ document.getElementById('encryptLit')?.addEventListener('click', function () {
 })
 
 
-// encrypt with Lit and write to ceramic
-document.getElementById('deleteMessage')?.addEventListener('click', function () {
+// unsend message means remove permissions from message receiver 
+document.getElementById('unsendMessage')?.addEventListener('click', function () {
   // @ts-ignore
   selectedWalletAddress = window.ethereum.selectedAddress
   console.log('$$$kl - unsending message from:', selectedWalletAddress);
@@ -295,10 +295,28 @@ document.getElementById('deleteMessage')?.addEventListener('click', function () 
         if(data[i].id == idToChange) {
           console.log('$$$kl - this is the streamID youre updating permissions on: ', streamToUpdate)
           
+          //https://developer.litprotocol.com/docs/AccessControlConditions/updateableConditions
+          //docs say this new key does not change, so we don't need to do anything with it.
           const newEncryptedSymmetricKey =
           litCeramicIntegration.updateAccess(streamToUpdate, newAccessControlConditions).then((value) => console.log(value));
+          console.log(newEncryptedSymmetricKey)
         }
       }
     }
+  );
+})
+
+document.getElementById('deleteMessage')?.addEventListener('click', function () {
+  const idToDelete = document.getElementById('deletemsg').value;
+  console.log('$$$kl - ID to delete from Rest API:', idToDelete);
+
+  //get the streamID of message id: N
+  //GET request to get off-chain data for RX user
+  fetch(` ${restApiUrl}/${idToDelete}`, {
+    method: 'DELETE',
+  })
+  .then((response) => response.json())
+  //Then with the data from the response in JSON...
+  .then((data) => {console.log('$$$kl - Deleted Message from Rest API: ', idToDelete);}   
   );
 })
