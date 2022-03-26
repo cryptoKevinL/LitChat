@@ -19,5 +19,8 @@ curl --request DELETE https://litchatrestapi.herokuapp.com/users/4
 Simple REST API used for Stream ID coordination:
 https://litchatrestapi.herokuapp.com/users
 
+GitHub for RestAPI:
+https://github.com/cryptoKevinL/LitChat-RestAPI
+
 Refer to https://github.com/LIT-Protocol/CeramicIntegration) for addtional details on the underlying core libraries.
 Apache-2.0 OR MIT
