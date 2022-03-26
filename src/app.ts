@@ -91,12 +91,14 @@ function addMessageReceiver(message, fromName, restApiMsgId){
     const div = document.createElement("div");
     div.className = "container"
     const para = document.createElement("p");
-    const node = document.createTextNode(`${message}` + "\n" + "(msgId:" + `${restApiMsgId}` + ")");
+    var textspan = document.createElement('span');
+    textspan.style.fontSize = "20px";
+    textspan.appendChild(document.createTextNode(`${message}` + "\n" + "(msgId:" + `${restApiMsgId}` + ")"));
     var mainspan = document.createElement('span');
     mainspan.setAttribute('class', 'time-left');
     const timeText = document.createTextNode(`${fromName}`);
     mainspan.appendChild(timeText)
-    para.appendChild(node);  
+    para.appendChild(textspan);  
     div.appendChild(para)
     div.appendChild(mainspan)
     const element = document.querySelector('main');
@@ -107,18 +109,19 @@ function addMessageSender(message, fromName, wasRead, restApiMsgId){
     const div = document.createElement("div");
     div.className = "container darker"
     const para = document.createElement("p");
-    let node;
+    var textspan = document.createElement('span');
+    textspan.style.fontSize = "20px";
     if(wasRead == true)
-       node = document.createTextNode(`${message}` + " (READ) (msgId:" + `${restApiMsgId}` + ")");
+      textspan.appendChild(document.createTextNode(`${message}` + " (READ) (msgId:" + `${restApiMsgId}` + ")"));
     else if(wasRead == "unsent")
-       node = document.createTextNode(`${message}` + " (UNSENT) (msgId:" + `${restApiMsgId}` + ")");
+      textspan.appendChild(document.createTextNode(`${message}` + " (UNSENT) (msgId:" + `${restApiMsgId}` + ")"));
     else
-       node = document.createTextNode(`${message}` + " (UNREAD) (msgId:" + `${restApiMsgId}` + ")");
+      textspan.appendChild(document.createTextNode(`${message}` + " (UNREAD) (msgId:" + `${restApiMsgId}` + ")"));
     var mainspan = document.createElement('span');
     mainspan.setAttribute('class', 'time-right');
     let timeText = document.createTextNode(`${fromName}`);
     mainspan.appendChild(timeText)
-    para.appendChild(node);  
+    para.appendChild(textspan);  
     div.appendChild(para)
     div.appendChild(mainspan)
     const element = document.querySelector('main');  
@@ -135,6 +138,7 @@ document.getElementById('readCeramic')?.addEventListener('click', () => {
     selectedWalletAddress = window.ethereum.selectedAddress
     console.log('$$$kl - Selected Address:', selectedWalletAddress);
 
+    document.getElementById('userDID').innerText = "Connected"
     updateChatData();
   }
   catch {

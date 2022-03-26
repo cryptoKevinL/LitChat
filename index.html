@@ -116,9 +116,27 @@
         display: none;
       }
 
+      .containerbackground {
+        border: 2px solid #080808e1;
+        background-color: #dbddd8;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+        text-align: left;
+      }
+
+      .containersub {
+        border: 2px solid #080808e1;
+        background-color: #c5c9c3;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+        text-align: left;
+      }
+
       .container {
-        border: 2px solid #dedede;
-        background-color: #f1f1f1;
+        border: 2px solid #233a05e1;
+        background-color: #a0af8d;
         border-radius: 5px;
         padding: 10px;
         margin: 10px 0;
@@ -126,19 +144,19 @@
       }
 
       .darker {
-        border-color: #ccc;
-        background-color: #ddd;
+        border-color: #3d1237;
+        background-color: #b9a9b8;
         text-align: right;
       }
 
       .time-right {
         float: right;
-        color: #aaa;
+        color: #0e0b0b;
       }
 
       .time-left {
         float: left;
-        color: #999;
+        color: #0c0a0a;
       }
       </style>
       </head>
@@ -147,7 +165,7 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="containersub">
       <header>
         <div class="row">
           <div class="col-xs-12 alert hide" role="alert" id="alerts"></div>
@@ -160,12 +178,10 @@
           +
           <img id="logo" src="images/web-playground-logo.svg" alt="web playground logo" />
         </div>
-        <h1>Lit Chat</h1>
+        <h1>This Chat is Lit! And Ceramic! And Secure!</h1>
         <p>
-          This Chat is Lit!
-          <br />
           Sent messages are encrypted with Lit and commited to the Ceramic network.
-          <br />
+
           Received messages come via Ceramic and are decrypted with Lit.
         </p>
         <form>
@@ -187,7 +203,7 @@
         </form>
       </header>
 
-      <main class="container center">
+      <main class="containerbackground center">
         <div id="encryptLit">
           <button
             id="encryptLit"
